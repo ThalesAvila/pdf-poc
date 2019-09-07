@@ -10,7 +10,14 @@ class App extends React.Component {
     this.setState({ [name]: value });
 
   createDownloadPdf = () => {
-    axios.post("/create-pdf", this.state);
+    axios
+      .post("/create-pdf", this.state)
+      .then(() => axios.get("fetch-pdf", { responseType: "blob" }))
+      .then(res => {
+        const pdfBlob = new Blob([res.data], { type: "application/pdf" });
+
+        saveAs(pdfBlob, "newPdf.pdf");
+      });
   };
 
   render() {
